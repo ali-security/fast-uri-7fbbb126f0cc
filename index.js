@@ -452,7 +452,14 @@ function normalizeComparableURI (uri, opts) {
   }
 
   if (typeof uri === 'object') {
-    return serialize(uri, opts)
+    // A component object that cannot be recomposed into an authority (a port
+    // that is not *DIGIT, for instance) has no comparable form: fail closed
+    // instead of letting the comparison succeed on a rewritten URI.
+    try {
+      return serialize(uri, opts)
+    } catch {
+      return undefined
+    }
   }
 }
 
